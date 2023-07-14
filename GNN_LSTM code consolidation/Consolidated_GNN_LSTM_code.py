@@ -189,6 +189,7 @@ if __name__ == '__main__':
         best_loss = float('inf')
         train_dataset = dataset[:int(0.8*new_time)]
         val_dataset = dataset[int(0.8*new_time):new_time]
+        # validation needs a second thought
         model = GraphLSTMModel(input_dim=1, hidden_dim=hidden_dim, output_dim=1, module=WeightedSAGEConv, skip_connection=True,
                                dropout_rate=dropout_rate, l2_penalty=l2_penalty)
         # Define the loss function and optimizer
