@@ -7,6 +7,7 @@ from tqdm import tqdm
 from rnn import LSTM
 from weight_sage import WeightedSAGEConv
 
+# This class is for data processing and will be used in further modelling
 class COVIDDatasetSpaced(InMemoryDataset):
     def __init__(self, root, transform=None, pre_transform=None):
         super(COVIDDatasetSpaced, self).__init__(root, transform, pre_transform)
