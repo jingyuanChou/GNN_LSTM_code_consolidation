@@ -38,6 +38,8 @@ pandas 1.3.5
 
 numpy 1.23.5
 
+Run multivariate_TE.py
+
 
 
 
