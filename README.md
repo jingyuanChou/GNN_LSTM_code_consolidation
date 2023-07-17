@@ -12,6 +12,8 @@ pandas 1.3.5
 
 numpy 1.23.5
 
+Run Consolidated_GNN_LSTM_code.py
+
 ==============================
 
 Required Package to run the LSTM_lijing code:
@@ -21,6 +23,8 @@ The LSTM_only code is written in TensorFlow and it requires additional packages:
 TensorFlow 2.12.0
 
 scikit-learn 1.2.2
+
+Run LSTM_lijing.py
 
 ==============================
 
