@@ -12,6 +12,8 @@ pandas 1.3.5
 
 numpy 1.23.5
 
+==============================
+
 Required Package to run the LSTM_lijing code:
 
 The LSTM_only code is written in TensorFlow and it requires additional packages:
