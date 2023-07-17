@@ -1,4 +1,4 @@
-# GNN_LSTM_code_consolidation
+# Required Packages
 
 Required Package to run the GNN_LSTM code:
 
