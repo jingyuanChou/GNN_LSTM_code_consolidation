@@ -245,6 +245,8 @@ if __name__ == '__main__':
                         val_loss.item()))
                 val_loss_ls.append(val_loss)
         # prediction for next 4 timestamps and predict in autoregressive way
+        best_model = GraphLSTMModel(input_dim=1, hidden_dim=hidden_dim, output_dim=1, module=WeightedSAGEConv, skip_connection=True,
+                               dropout_rate=dropout_rate, l2_penalty=l2_penalty)
         best_model = model.load_state_dict(torch.load('best_model_weights.pt'))
         testing_data = dataset[new_time]
         next_val_4 = list()
