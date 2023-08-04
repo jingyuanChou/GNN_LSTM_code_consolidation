@@ -11,7 +11,6 @@ import datetime
 
 
 if __name__ == '__main__':
-    states = pd.read_csv('state_hhs_map.csv')
     # VA: 51
     # SC: 45
     # NC: 37
@@ -24,15 +23,10 @@ if __name__ == '__main__':
     state_fips_dict = {'VA':51,'SC':45, 'NC':37,'GA':13, 'TN':47}
     fips_state_dict = {51:'VA',45:'SC',37:'NC',13:'GA',47:'TN'}
 
-    columns = ['name_long', 'Longitude', 'Latitude', 'continent']
-    # Choose only a single continent for smaller testing (can choose any continent)
-
     hopsitalization = pd.read_csv('hosp_weekly_filt_case_data.csv')
-    hopsitalization = hopsitalization.iloc[:-1, :]
-    hopsitalization = hopsitalization.T
+    hopsitalization = hopsitalization.iloc[:-1, :].T
     hopsitalization.columns = hopsitalization.iloc[0, :]
-    hopsitalization = hopsitalization.iloc[1:, :]
-    hopsitalization = hopsitalization.iloc[28:, :]
+    hopsitalization = hopsitalization.iloc[29:, :] # remove records with all 0
 
     # neighboring states
     neighbouring_states = pd.read_csv('neighbors-states.csv')
@@ -61,6 +55,8 @@ if __name__ == '__main__':
     hopsitalization.columns = new_col
 
     hopsitalization = hopsitalization[selected_states]
+    five_states_hospitalization = hopsitalization
+    five_states_hospitalization.to_csv('five_states_hosp.csv',index=False)
 
     col_names = list(hopsitalization.columns)
 
@@ -94,7 +90,6 @@ if __name__ == '__main__':
                           [0, 1, 0, 1, 0],
                           [0, 1, 1, 0, 1],
                           [1, 1, 0, 1, 0]])
-
     source_target_te = dict()
     for i in range(0,5):
         for j in range(0,5):
@@ -162,7 +157,7 @@ if __name__ == '__main__':
                         if i not in sources_of_j:
                             source_target_te[i][j].append(0)
                         else:
-                            index =  np.where(sources_of_j == i)[0]
+                            index = np.where(sources_of_j == i)[0]
                             te = temp['selected_sources_te'][index]
                             source_target_te[i][j].append(te[0])
 
