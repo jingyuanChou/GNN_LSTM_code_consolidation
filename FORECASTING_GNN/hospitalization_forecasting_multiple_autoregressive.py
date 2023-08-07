@@ -109,9 +109,8 @@ def evaluate(data, X, Y, model, criterion, batch_size):
 
     return total_loss / n_samples
 
-def predict_next_timestamp(data, X, model, future_timestamps, mc_num):
+def predict_next_timestamp(X, model, future_timestamps, mc_num):
     model.train() # enable dropout
-
     mc_num_predictions = list()
     orginal_X = X
     for num_iteration in range(mc_num):
@@ -221,7 +220,7 @@ def main(runid):
     starting_time = 60
 
     for current_time in range(starting_time, hopsitalization.shape[0]):
-        if current_time == 70:
+        if current_time == 80:
             break
         available_data = hopsitalization[:current_time,:]
         Data = DataLoaderM_hosp(available_data, 0.6, 0.2, args.device, args.horizon, args.seq_in_len,args.prediction_window, args.normalize)
@@ -286,7 +285,7 @@ def main(runid):
         plt.show()
         '''
         # Predict in autoregressive way
-        next_4_pred = predict_next_timestamp(Data, Data.test[0], model, args.prediction_window, 50)
+        next_4_pred = predict_next_timestamp(Data.predict_data,model, args.seq_out_len, 50)
         # plot_for_each_state(hopsitalization, next_4_pred, current_time)
         list_of_next_4_since_current_time.append(next_4_pred)
 
@@ -298,7 +297,7 @@ def plot_all(time,list_of_next_4_since_current_time, hospitalization):
     cur_time = time
     time_range = range(time, hospitalization.shape[0], 4)
     for i in range(hospitalization.shape[1]):
-        plt.plot(hospitalization[:,i])
+        plt.plot(range(1,(hospitalization.shape[0] + 1)),hospitalization[:,i])
         for index, time in enumerate(time_range):
             if (time - cur_time) >= len(list_of_next_4_since_current_time):
                 break
@@ -307,11 +306,10 @@ def plot_all(time,list_of_next_4_since_current_time, hospitalization):
             corresponding_state_50_mc_dropout_results = np.array(corresponding_state_50_mc_dropout_results)
             mean = np.mean(corresponding_state_50_mc_dropout_results, axis=0)
             std_dev = np.std(corresponding_state_50_mc_dropout_results, axis=0)
-            x_value = np.insert(mean, 0, hospitalization[time,i])
-            x_range = range(time, time + 5)
-            plt.plot(x_range, x_value, color='red', linestyle='--', marker='o',
+            x_range = range(time+1, time + 5)
+            plt.plot(x_range, mean, color='red', linestyle='--', marker='o',
                          markersize=2.0)
-            plt.fill_between(range(time + 1, time + 5), mean - std_dev, mean + std_dev, alpha=0.6)
+            plt.fill_between(x_range, mean - std_dev, mean + std_dev, alpha=0.6)
             # plt.plot(x_range, x_value, color = 'orange')
         plt.show()
 

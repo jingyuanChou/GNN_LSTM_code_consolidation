@@ -371,6 +371,7 @@ class DataLoaderM_hosp(object):
         self.P = window
         self.prediction_window = prediction_window
         self.h = horizon
+        self.predict_data = None
         self.rawdat = data
         self.dat = np.zeros(self.rawdat.shape)
         self.n, self.m = self.dat.shape
@@ -378,7 +379,6 @@ class DataLoaderM_hosp(object):
         self.scale = np.ones(self.m)
         self._normalized(normalize)
         self._split(int(train * self.n), int((train + valid) * self.n), self.n)
-
         self.scale = torch.from_numpy(self.scale).float()
 
         self.scale = self.scale.to(device)
@@ -413,12 +413,22 @@ class DataLoaderM_hosp(object):
         n = len(idx_set)
         X = torch.zeros((n, self.P, self.m))
         Y = torch.zeros((n, self.h,self.m))
+        if idx_set[-1] == self.n - 1:
+            data_split = 'test'
+        else:
+            data_split = None
         for i in range(n):
             end = idx_set[i] - self.h + 1
             start = end - self.P
             X[i, :, :] = torch.from_numpy(self.dat[start:end, :])
             Y[i, :, :] = torch.from_numpy(self.dat[end:idx_set[i]+1, :])
             print(end, idx_set[i])
+        second_half = torch.zeros((self.h, self.P, self.m))
+        if data_split == 'test':
+            first_half = X[self.h:,:,:]
+            for index in range(self.h):
+                second_half[index,:,:] = torch.from_numpy(self.dat[(start+index+1):(start+index+self.P+1), :])
+            self.predict_data = torch.cat((first_half, second_half), dim=0)
         return [X, Y]
 
     def get_batches(self, inputs, targets, batch_size, shuffle=True):
