@@ -6,4 +6,4 @@ if Adjacency[i][j] = 1, then there is an edge from region i to region j, otherwi
 
 adj_matrix_from_Bivariate_TE is the adjacency matrix from Bivariate Transfer Entropy. 
 
-(Change MultivariateTE() to BivariateTE() to obtain results for Bivariate)
+(Change MultivariateTE() to BivariateTE() in multivariate_TE_51_regions.py to obtain results for Bivariate)
