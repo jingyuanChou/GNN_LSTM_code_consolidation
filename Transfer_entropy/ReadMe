@@ -1,0 +1,5 @@
+Transfer_entropy/adj_matrix_from_Mutivariate_TE is the adjacency matrxi of 51 regions in US
+
+index_2_state is the <index, states> dictionary, corresponding to adj_matrix_from_Mutivariate_TE.
+
+if Adjacency[i][j] = 1, then there is an edge from region i to region j
