@@ -3,3 +3,6 @@ Transfer_entropy/adj_matrix_from_Mutivariate_TE is the adjacency matrix of 51 re
 index_2_state is the <index, states> dictionary, corresponding to adj_matrix_from_Mutivariate_TE.
 
 if Adjacency[i][j] = 1, then there is an edge from region i to region j, otherwise, it's 0. 
+
+adj_matrix_from_Bivariate_TE is the adjacency matrix from Bivariate Transfer Entropy. 
+(Change MultivariateTE() to BivariateTE() to obtain results for Bivariate)
