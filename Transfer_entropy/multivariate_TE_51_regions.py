@@ -1,3 +1,5 @@
+import pickle
+
 import matplotlib.pyplot as plt
 import numpy as np
 from idtxl.multivariate_te import MultivariateTE
@@ -44,6 +46,11 @@ if __name__ == '__main__':
     adj = torch.from_numpy(adj.A)
     time = 119
 
+    with open("index_2_state", "wb") as idx_2_state:  # Pickling
+        pickle.dump(index_2_state, idx_2_state)
+
+    # remove alaska and hawaii, thus 0 and 11 index must be removed
+
     print('=================================== Running '+str(time)+'-th timestamp, total 123 timestamps')
     # Arrange the data in a 2D array
     data = hopsitalization[0:time,:]
@@ -61,5 +68,36 @@ if __name__ == '__main__':
                 'min_lag_sources': 2,
                 'verbose':False}
 
+    source_target_te = dict()
+    for i in range(0,49):
+        for j in range(0, 49):
+            if i == j:
+                continue
+            else:
+                if i not in source_target_te.keys():
+                    source_target_te[i] = dict()
+                    source_target_te[i][j] = list()
+                else:
+                    source_target_te[i][j] = list()
+
     # Run the analysis
     results = network_analysis.analyse_network(settings=settings, data=data_idtxl)
+
+    for i in range(0, 49):
+        for j in range(0, 49):
+            if i == j:
+                continue
+            else:
+                temp = results.get_single_target(target=j)
+                sources_of_j = [temp_Ls[0] for temp_Ls in temp['selected_vars_sources']]
+                if i not in sources_of_j:
+                    source_target_te[i][j].append(0)
+                else:
+                    index = sources_of_j.index(i)
+                    te = temp['selected_sources_te'][index]
+                    source_target_te[i][j].append(te)
+
+    with open('MTE_49_states.pkl', 'wb') as f:
+        pickle.dump(source_target_te, f)
+
+
