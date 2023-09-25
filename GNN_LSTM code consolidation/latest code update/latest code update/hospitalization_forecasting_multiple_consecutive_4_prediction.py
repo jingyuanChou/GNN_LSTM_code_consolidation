@@ -5,7 +5,6 @@ import argparse
 import time
 from util import *
 from trainer import Trainer
-from net import gtnet
 import pandas as pd
 import argparse
 import math
@@ -14,9 +13,6 @@ import networkx as nx
 import torch
 import torch.nn as nn
 from net import gtnet
-import numpy as np
-import importlib
-import tqdm
 from util import *
 from trainer import Optim
 
