@@ -7,7 +7,7 @@ import pandas as pd
 import numpy as np
 import networkx as nx
 from statsmodels.tsa.api import VAR
-
+import pickle
 def create_dataset(data, input_length, output_length):
     X, y = [], []
     for i in range(len(data) - input_length - output_length + 1):
@@ -282,17 +282,20 @@ if __name__ == '__main__':
     hopsitalization = hopsitalization.iloc[:, 30:]  # remove all 0 datapoints
     hopsitalization = hopsitalization.T.values
     models = ['LSTM','GRU','VAR'] # GraphLSTM is in another repository, DCRNN as well
-
     input_length = 12
     output_length = 4
     hidden_dim = 8
-
     neighbouring_states_edges = neighbouring_states.iloc[0:109, :]
-
     for model in models:
         if model == 'LSTM':
             lstm_mae_result = LSTM(hopsitalization, input_length, output_length, hidden_dim, index_2_fips, fips_2_state)
+            with open("lstm_result", "wb") as file:  # Pickling
+                pickle.dump(lstm_mae_result, file)
         elif model == 'GRU':
             gru_mae_result = GRU(hopsitalization, input_length, output_length, hidden_dim, index_2_fips, fips_2_state)
+            with open("gru_result", "wb") as file:  # Pickling
+                pickle.dump(gru_mae_result, file)
         elif model == 'VAR':
             VAR_MAE_RESULT = VAR_multi(hopsitalization, input_length, output_length, index_2_fips, fips_2_state)
+            with open("VAR_MAE_RESULT", "wb") as file:  # Pickling
+                pickle.dump(VAR_MAE_RESULT, file)

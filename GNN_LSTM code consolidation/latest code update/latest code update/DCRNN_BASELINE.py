@@ -6,9 +6,7 @@ import torch.nn as nn
 from sklearn.preprocessing import MinMaxScaler
 from torch_geometric.utils import degree, to_dense_adj
 from torch_geometric.utils.convert import from_networkx
-
-
-
+import pickle
 def generate_sequences(data, input_seq_len, pred_seq_len):
     input_sequences = []
     target_sequences = []
@@ -150,20 +148,60 @@ if __name__ == '__main__':
 
     model = TrafficPredictor(1, hidden_dim, K)
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
-    criterion = nn.MSELoss()
+    criterion = nn.L1Loss()
 
+    min_val_loss = float('inf')
+    best_model_path = 'best_model_DCRNN.pth'
     for epoch in range(epochs):
         model.train()
         optimizer.zero_grad()
-        predictions_train = model(X_train, edge_index)  # [83, 4, 49, 1]
+        predictions_train = model(X_train, edge_index)
+        predictions_train = torch.squeeze(predictions_train)# [83, 4, 49, 1]
         loss_train = criterion(predictions_train, y_train)
         loss_train.backward()
         optimizer.step()
 
         model.eval()
         with torch.no_grad():
-            predictions_val = model(X_val, edge_index)  # [6, 4, 49, 1]
+            predictions_val = model(X_val, edge_index)
+            predictions_val = torch.squeeze(predictions_val)# [6, 4, 49, 1]
             loss_val = criterion(predictions_val, y_val)
 
         print(
             f"Epoch {epoch + 1}/{epochs} - Train Loss: {loss_train.item():.4f}, Validation Loss: {loss_val.item():.4f}")
+
+        if loss_val < min_val_loss and loss_train > loss_val:
+            min_val_loss = loss_val
+            torch.save(model.state_dict(), best_model_path)
+            best_epoch = epoch
+
+    # Prediction stage
+    if min_val_loss == float('inf'):
+        best_DCRNN_model = model
+    else:
+        best_DCRNN_model = TrafficPredictor(1, hidden_dim, K)
+        best_DCRNN_model.load_state_dict(torch.load(best_model_path))
+    predictions_test = best_DCRNN_model(X_test, edge_index)
+    y_test = torch.unsqueeze(y_test,3)  # [6, 4, 49, 1]
+    loss_val = criterion(predictions_test, y_test)
+    final_pred = y_test[-1]
+    final_pred = torch.squeeze(final_pred)
+    reverse_back_value = scaler.inverse_transform(final_pred)
+    final_4_steps = final_pred.detach().cpu().numpy()
+    # check loss
+    state_MAE_dict = dict()
+
+    for index in range(final_4_steps.shape[1]):
+        cur_state = index_2_state[index]
+        ave_loss_per_state = np.sum(abs(final_4_steps[:,index] - reverse_back_value[:,index])) / 4
+        state_MAE_dict[cur_state] = ave_loss_per_state
+    with open("DCRNN_result", "wb") as dcrnn_res:  # Pickling
+        pickle.dump(state_MAE_dict, dcrnn_res)
+
+
+
+
+
+
+
+
