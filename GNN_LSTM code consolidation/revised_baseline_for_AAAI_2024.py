@@ -120,7 +120,7 @@ if __name__ == '__main__':
     horizon = 4
     lookback_pattern = [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
 
-    hopsitalization = pd.read_csv('covid-data/hosp_weekly_filt_case_data.csv')
+    hopsitalization = pd.read_csv('FORECASTING_GNN/hosp_weekly_filt_case_data.csv')
     hopsitalization = hopsitalization.reset_index()
     hopsitalization['state'] = hopsitalization['state'].astype(int)
 
